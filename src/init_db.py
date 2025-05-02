@@ -48,11 +48,11 @@ def main():
         if reset_flag:
             print("Running schema.sql...")
             run_sql_file(cursor, schema_path)
-
             print("Running data.sql...")
             run_sql_file(cursor, data_path)
         else:
-            print("Skipping schema and data load (no reset)")
+            print("Skipping schema load; running data load...")
+            run_sql_file(cursor, data_path)
 
         connection.commit()
         # Re-enable foreign key checks
