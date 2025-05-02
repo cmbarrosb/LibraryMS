@@ -1,5 +1,5 @@
 -- Book Table
-CREATE TABLE Book (
+CREATE TABLE IF NOT EXISTS Book (
     I VARCHAR(20) PRIMARY KEY,            -- ISBN
     T VARCHAR(100),                       -- Title
     S VARCHAR(50),                        -- Subject
@@ -8,7 +8,7 @@ CREATE TABLE Book (
 );
 
 -- Copy Table
-CREATE TABLE Copy (
+CREATE TABLE IF NOT EXISTS Copy (
     I VARCHAR(20),                        -- ISBN (FK)
     C INT,                                -- CopyID
     V ENUM('Available', 'Not Available'),-- Copy Status
@@ -18,25 +18,25 @@ CREATE TABLE Copy (
 );
 
 -- Member Table
-CREATE TABLE Member (
+CREATE TABLE IF NOT EXISTS Member (
     M INT PRIMARY KEY,                    -- MemberID
     N VARCHAR(100),                       -- Name
     Q CHAR(9),                            -- SSN
     X VARCHAR(200),                       -- Address
-    Y VARCHAR(100),                       -- Campus (from schema context)
     E DATE,                               -- Expiration Date
     Z BOOLEAN                             -- Active Membership
+    P BOOLEAN                             -- Professor privileges (longer loan/grace periods)
 );
 
 -- Staff Table
-CREATE TABLE Staff (
+CREATE TABLE IF NOT EXISTS Staff (
     H INT PRIMARY KEY,                    -- StaffID
     Z1 VARCHAR(100),                      -- Staff Name
     Z2 VARCHAR(50)                        -- Role
 );
 
 -- Loan Table
-CREATE TABLE Loan (
+CREATE TABLE IF NOT EXISTS Loan (
     O INT PRIMARY KEY,                    -- LoanID
     M INT,                                -- MemberID (FK)
     I VARCHAR(20),                        -- ISBN (FK)
@@ -44,9 +44,7 @@ CREATE TABLE Loan (
     B DATE,                               -- Checkout Date
     U DATE,                               -- Due Date
     W DATE,                               -- Return Date
-    F VARCHAR(100),                       -- Optional Field (Unspecified in schema)
     K ENUM('None', 'NoticeSent', 'Late'),-- Overdue Status
-    J VARCHAR(255),                       -- Optional Field (Unspecified)
     H INT,                                -- StaffID (FK)
     FOREIGN KEY (M) REFERENCES Member(M),
     FOREIGN KEY (I, C) REFERENCES Copy(I, C),
