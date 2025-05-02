@@ -17,7 +17,7 @@ def run_sql_file(cursor, filepath):
 def main():
     connection = None
 
-    print("🔐 Enter your MySQL login details")
+    print("Enter your MySQL login details")
     host = input("Host [localhost]: ") or "localhost"
     user = input("Username [root]: ") or "root"
     password = getpass.getpass("Password: ")
@@ -38,17 +38,17 @@ def main():
         schema_path = os.path.join(current_dir, '..', 'sql', 'schema.sql')
         data_path = os.path.join(current_dir, '..', 'sql', 'data.sql')
 
-        print("📘 Running schema.sql...")
+        print("Running schema.sql...")
         run_sql_file(cursor, schema_path)
 
-        print("📗 Running data.sql...")
+        print("Running data.sql...")
         run_sql_file(cursor, data_path)
 
         connection.commit()
-        print("✅ Database initialized successfully!")
+        print("Database initialized successfully!")
 
     except mysql.connector.Error as err:
-        print(f"❌ Connection error: {err}")
+        print(f"Connection error: {err}")
 
     finally:
         if connection and connection.is_connected():
