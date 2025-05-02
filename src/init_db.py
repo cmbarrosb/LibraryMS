@@ -22,29 +22,41 @@ def main():
     user = input("Username [root]: ") or "root"
     password = getpass.getpass("Password: ")
     database = input("Database [library_db]: ") or "library_db"
+    reset_flag = input("Reset database? (y/N): ").strip().lower() == 'y'
 
     config = {
         'host': host,
         'user': user,
-        'password': password,
-        'database': database
+        'password': password
     }
 
     try:
         connection = mysql.connector.connect(**config)
         cursor = connection.cursor()
+        if reset_flag:
+            # Reset database to a clean state
+            cursor.execute(f"DROP DATABASE IF EXISTS {database};")
+            cursor.execute(f"CREATE DATABASE {database};")
+        cursor.execute(f"USE {database};")
+        # Disable foreign key checks for bulk loading
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
         schema_path = os.path.join(current_dir, '..', 'sql', 'schema.sql')
         data_path = os.path.join(current_dir, '..', 'sql', 'data.sql')
 
-        print("Running schema.sql...")
-        run_sql_file(cursor, schema_path)
+        if reset_flag:
+            print("Running schema.sql...")
+            run_sql_file(cursor, schema_path)
 
-        print("Running data.sql...")
-        run_sql_file(cursor, data_path)
+            print("Running data.sql...")
+            run_sql_file(cursor, data_path)
+        else:
+            print("Skipping schema and data load (no reset)")
 
         connection.commit()
+        # Re-enable foreign key checks
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
         print("Database initialized successfully!")
 
     except mysql.connector.Error as err:
