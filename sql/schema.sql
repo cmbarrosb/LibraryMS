@@ -1,52 +1,52 @@
 -- Book Table
 CREATE TABLE IF NOT EXISTS Book (
-    I VARCHAR(20) PRIMARY KEY,            -- ISBN
-    T VARCHAR(100),                       -- Title
-    S VARCHAR(50),                        -- Subject
-    A VARCHAR(100),                       -- Author
-    D TEXT                                -- Description
+    isbn VARCHAR(20) PRIMARY KEY,            -- ISBN
+    title VARCHAR(100),                      -- Title
+    subject VARCHAR(50),                     -- Subject
+    author VARCHAR(100),                     -- Author
+    description TEXT                         -- Description
 );
 
 -- Copy Table
 CREATE TABLE IF NOT EXISTS Copy (
-    I VARCHAR(20),                        -- ISBN (FK)
-    C INT,                                -- CopyID
-    V ENUM('Available', 'Not Available'),-- Copy Status
-    L VARCHAR(100),                       -- Location
-    PRIMARY KEY (I, C),
-    FOREIGN KEY (I) REFERENCES Book(I)
+    isbn VARCHAR(20),                        -- ISBN (FK)
+    copy_id INT,                             -- CopyID
+    status ENUM('Available','Not Available'),-- Copy status
+    location VARCHAR(100),                   -- Location
+    PRIMARY KEY (isbn, copy_id),
+    FOREIGN KEY (isbn) REFERENCES Book(isbn)
 );
 
 -- Member Table
 CREATE TABLE IF NOT EXISTS Member (
-    M INT PRIMARY KEY,                    -- MemberID
-    N VARCHAR(100),                       -- Name
-    Q CHAR(9),                            -- SSN
-    X VARCHAR(200),                       -- Address
-    E DATE,                               -- Expiration Date
-    Z BOOLEAN                             -- Active Membership
-    P BOOLEAN                             -- Professor privileges (longer loan/grace periods)
+    member_id INT PRIMARY KEY,               -- MemberID
+    name VARCHAR(100),                       -- Name
+    ssn CHAR(9),                             -- SSN
+    address VARCHAR(200),                    -- Address
+    expiration_date DATE,                    -- Expiration date
+    active_flag BOOLEAN,                     -- Active membership flag
+    professor_privileges BOOLEAN             -- Professor privileges
 );
 
 -- Staff Table
 CREATE TABLE IF NOT EXISTS Staff (
-    H INT PRIMARY KEY,                    -- StaffID
-    Z1 VARCHAR(100),                      -- Staff Name
-    Z2 VARCHAR(50)                        -- Role
+    staff_id INT PRIMARY KEY,                -- StaffID
+    staff_name VARCHAR(100),                 -- Staff name
+    staff_role VARCHAR(50)                   -- Staff role
 );
 
 -- Loan Table
 CREATE TABLE IF NOT EXISTS Loan (
-    O INT PRIMARY KEY,                    -- LoanID
-    M INT,                                -- MemberID (FK)
-    I VARCHAR(20),                        -- ISBN (FK)
-    C INT,                                -- CopyID (FK w/ ISBN)
-    B DATE,                               -- Checkout Date
-    U DATE,                               -- Due Date
-    W DATE,                               -- Return Date
-    K ENUM('None', 'NoticeSent', 'Late'),-- Overdue Status
-    H INT,                                -- StaffID (FK)
-    FOREIGN KEY (M) REFERENCES Member(M),
-    FOREIGN KEY (I, C) REFERENCES Copy(I, C),
-    FOREIGN KEY (H) REFERENCES Staff(H)
+    loan_id INT PRIMARY KEY,                 -- LoanID
+    member_id INT,                           -- MemberID (FK)
+    isbn VARCHAR(20),                        -- ISBN (FK)
+    copy_id INT,                             -- CopyID (FK)
+    checkout_date DATE,                      -- Checkout date
+    due_date DATE,                           -- Due date
+    return_date DATE,                        -- Return date
+    overdue_status ENUM('None','NoticeSent','Late'), -- Overdue status
+    staff_id INT,                            -- StaffID (FK)
+    FOREIGN KEY (member_id) REFERENCES Member(member_id),
+    FOREIGN KEY (isbn, copy_id) REFERENCES Copy(isbn, copy_id),
+    FOREIGN KEY (staff_id) REFERENCES Staff(staff_id)
 );
