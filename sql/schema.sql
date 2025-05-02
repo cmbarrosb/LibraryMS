@@ -1,0 +1,54 @@
+-- Book Table
+CREATE TABLE Book (
+    I VARCHAR(20) PRIMARY KEY,            -- ISBN
+    T VARCHAR(100),                       -- Title
+    S VARCHAR(50),                        -- Subject
+    A VARCHAR(100),                       -- Author
+    D TEXT                                -- Description
+);
+
+-- Copy Table
+CREATE TABLE Copy (
+    I VARCHAR(20),                        -- ISBN (FK)
+    C INT,                                -- CopyID
+    V ENUM('Available', 'Not Available'),-- Copy Status
+    L VARCHAR(100),                       -- Location
+    PRIMARY KEY (I, C),
+    FOREIGN KEY (I) REFERENCES Book(I)
+);
+
+-- Member Table
+CREATE TABLE Member (
+    M INT PRIMARY KEY,                    -- MemberID
+    N VARCHAR(100),                       -- Name
+    Q CHAR(9),                            -- SSN
+    X VARCHAR(200),                       -- Address
+    Y VARCHAR(100),                       -- Campus (from schema context)
+    E DATE,                               -- Expiration Date
+    Z BOOLEAN                             -- Active Membership
+);
+
+-- Staff Table
+CREATE TABLE Staff (
+    H INT PRIMARY KEY,                    -- StaffID
+    Z1 VARCHAR(100),                      -- Staff Name
+    Z2 VARCHAR(50)                        -- Role
+);
+
+-- Loan Table
+CREATE TABLE Loan (
+    O INT PRIMARY KEY,                    -- LoanID
+    M INT,                                -- MemberID (FK)
+    I VARCHAR(20),                        -- ISBN (FK)
+    C INT,                                -- CopyID (FK w/ ISBN)
+    B DATE,                               -- Checkout Date
+    U DATE,                               -- Due Date
+    W DATE,                               -- Return Date
+    F VARCHAR(100),                       -- Optional Field (Unspecified in schema)
+    K ENUM('None', 'NoticeSent', 'Late'),-- Overdue Status
+    J VARCHAR(255),                       -- Optional Field (Unspecified)
+    H INT,                                -- StaffID (FK)
+    FOREIGN KEY (M) REFERENCES Member(M),
+    FOREIGN KEY (I, C) REFERENCES Copy(I, C),
+    FOREIGN KEY (H) REFERENCES Staff(H)
+);
