@@ -97,7 +97,11 @@ def list_books():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count = input("How many books would you like to list? ")
+        # Show total number of books
+        cursor.execute("SELECT COUNT(*) AS total FROM Book;")
+        total = cursor.fetchone()['total']
+        print(f"There are {total} books in the database.")
+        count = input("How many books would you like to list? [10]: ").strip()
         try:
             n = int(count)
         except ValueError:
@@ -181,7 +185,11 @@ def list_copies():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count = input("How many copies would you like to list? ")
+        # Show total number of copies
+        cursor.execute("SELECT COUNT(*) AS total FROM Copy;")
+        total = cursor.fetchone()['total']
+        print(f"There are {total} copies in the database.")
+        count = input("How many copies would you like to list? [10]: ").strip()
         try:
             n = int(count)
         except ValueError:
@@ -266,7 +274,11 @@ def list_members():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count = input("How many members would you like to list? ")
+        # Show total number of members
+        cursor.execute("SELECT COUNT(*) AS total FROM Member;")
+        total = cursor.fetchone()['total']
+        print(f"There are {total} members in the database.")
+        count = input("How many members would you like to list? [10]: ").strip()
         try:
             n = int(count)
         except ValueError:
@@ -347,7 +359,11 @@ def list_staff():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count = input("How many staff members would you like to list? ")
+        # Show total number of staff
+        cursor.execute("SELECT COUNT(*) AS total FROM Staff;")
+        total = cursor.fetchone()['total']
+        print(f"There are {total} staff members in the database.")
+        count = input("How many staff members would you like to list? [10]: ").strip()
         try:
             n = int(count)
         except ValueError:
@@ -429,7 +445,11 @@ def list_loans():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count = input("How many loans would you like to list? ")
+        # Show total number of loans
+        cursor.execute("SELECT COUNT(*) AS total FROM Loan;")
+        total = cursor.fetchone()['total']
+        print(f"There are {total} loans in the database.")
+        count = input("How many loans would you like to list? [10]: ").strip()
         try:
             n = int(count)
         except ValueError:
