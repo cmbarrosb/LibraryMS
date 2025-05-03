@@ -45,22 +45,12 @@
    - Write simple test calls at the bottom of `crud.py` to verify each function
    - Log success or errors to the console
 
-5. Compile SQL Query Report – 4 hours
-   - Document DDL and DML scripts
-   - Provide sample `SELECT`, `UPDATE`, `DELETE` queries
-   - Execute each sample query in the MySQL CLI and redirect output: `mysql -e "SELECT ...;" > query_output.txt`
-   - Copy queries and their outputs into `SQL_Report.md` with explanations
-
-6. Joint Report – 3 hours
-   - Assemble the Part B report, including:
-     - All SQL scripts (DDL/DML)
-     - Sample query outputs
-     - Code snippets for DB init and CRUD
-     - Screenshots demonstrating functionality
-     - List of team contributions by task
-   - Collect all SQL files (`schema.sql`, `data.sql`), Python scripts (`init_db.py`, `crud.py`)
-   - Take screenshots of CLI outputs and function calls
-   - Draft `PartB_Report.md` summarizing tasks, code snippets, and contributions
+5. Draft Part B Report – 6 hours
+   - Include schema and data excerpts from schema.sql and data.sql
+   - Document 3–5 key SQL queries (SELECT, UPDATE, DELETE) with purpose, descriptions, and query outputs
+   - Present code snippets from init_db.py and crud.py highlighting setup and CRUD logic
+   - Embed screenshots of menu-driven CRUD operations and sample terminal outputs
+   - Detail team contributions for each report section
 
 
 
