@@ -2,6 +2,24 @@ import mysql.connector
 from mysql.connector import Error
 import getpass
 
+# --- Table Printing Helper ---
+def print_table(rows):
+    """Print a list of dicts as a simple table."""
+    if not rows:
+        print("No records found.")
+        return
+    headers = list(rows[0].keys())
+    # compute column widths
+    widths = {h: max(len(h), max(len(str(r[h])) for r in rows)) for h in headers}
+    # print header
+    header_line = " | ".join(h.ljust(widths[h]) for h in headers)
+    print(header_line)
+    print("-" * len(header_line))
+    # print each row
+    for r in rows:
+        line = " | ".join(str(r[h]).ljust(widths[h]) for h in headers)
+        print(line)
+
 # Module-level connection (initialized on first use)
 _conn = None
 
@@ -382,7 +400,8 @@ def books_menu():
             isbn = input("ISBN: ")
             print("Book:", get_book(isbn))
         elif choice == "3":
-            print("Books:", list_books())
+            rows = list_books()
+            print_table(rows)
         elif choice == "4":
             isbn = input("ISBN: ")
             field = input("Field to update: ")
@@ -418,7 +437,8 @@ def copies_menu():
             cid = int(input("Copy ID: "))
             print("Copy:", get_copy(isbn, cid))
         elif choice == "3":
-            print("Copies:", list_copies())
+            rows = list_copies()
+            print_table(rows)
         elif choice == "4":
             isbn = input("ISBN: ")
             cid = int(input("Copy ID: "))
@@ -458,7 +478,8 @@ def members_menu():
             mid = int(input("Member ID: "))
             print("Member:", get_member(mid))
         elif choice == "3":
-            print("Members:", list_members())
+            rows = list_members()
+            print_table(rows)
         elif choice == "4":
             mid = int(input("Member ID: "))
             field = input("Field to update: ")
@@ -492,7 +513,8 @@ def staff_menu():
             sid = int(input("Staff ID: "))
             print("Staff:", get_staff(sid))
         elif choice == "3":
-            print("Staff Members:", list_staff())
+            rows = list_staff()
+            print_table(rows)
         elif choice == "4":
             sid = int(input("Staff ID: "))
             field = input("Field to update: ")
