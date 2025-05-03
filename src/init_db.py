@@ -6,12 +6,23 @@ import mysql.connector
 import os
 import getpass
 
+# Set to False if you want to prompt for host, user, and database as well
+USE_DEFAULT = True
+
 # Prompt the user for MySQL connection details
 def prompt_credentials():
-    host = input("Host [localhost]: ") or "localhost"
-    user = input("Username [root]: ") or "root"
-    password = getpass.getpass("Password: ")
-    database = input("Database [library_db]: ") or "library_db"
+    if USE_DEFAULT:
+        # Using default host/user/database; only prompt for password
+        host = "localhost"
+        user = "root"
+        database = "library_db"
+        password = getpass.getpass("MySQL password for root@localhost: ")
+    else:
+        # Prompt for all connection details
+        host = input("Host [localhost]: ") or "localhost"
+        user = input("Username [root]: ") or "root"
+        password = getpass.getpass("Password: ")
+        database = input("Database [library_db]: ") or "library_db"
     return host, user, password, database
 
 # Open a connection to the MySQL server using provided credentials
@@ -47,6 +58,7 @@ def load_sql_files(cursor, schema_path, data_path):
 # Main orchestration: prompt credentials, connect, initialize, load SQL, and cleanup
 def main():
     print("Enter your MySQL login details")
+
     host, user, password, database = prompt_credentials()
 
     # Establish a database connection and create a cursor
