@@ -6,10 +6,11 @@ import getpass
 _conn = None
 
 def prompt_credentials():
-    host = input("Host [localhost]: ") or "localhost"
-    user = input("Username [root]: ") or "root"
-    password = getpass.getpass("Password: ")
-    database = input("Database [library_db]: ") or "library_db"
+    """Prompt only for the database password; use default host, user, database."""
+    host = "localhost"
+    user = "root"
+    database = "library_db"
+    password = getpass.getpass("MySQL password for root@localhost: ")
     return host, user, password, database
 
 def open_connection(host, user, password, database):
@@ -22,11 +23,10 @@ def open_connection(host, user, password, database):
     return mysql.connector.connect(**config)
 
 def get_connection():
-    """Prompt for credentials once and reuse the same connection."""
+    """Return the existing database connection."""
     global _conn
     if _conn is None:
-        host, user, password, database = prompt_credentials()
-        _conn = open_connection(host, user, password, database)
+        raise RuntimeError("Database connection has not been initialized.")
     return _conn
 
 def add_book(isbn, title, subject, author, description):
@@ -508,6 +508,10 @@ def staff_menu():
 
 def main():
     """Main menu to select an entity subsystem."""
+    global _conn
+    # Prompt for password and open connection once
+    host, user, password, database = prompt_credentials()
+    _conn = open_connection(host, user, password, database)
     while True:
         print("\nLibraryMS Main Menu:")
         print("1) Books")
@@ -526,7 +530,6 @@ def main():
             staff_menu()
         elif choice == "0":
             print("Goodbye!")
-            global _conn
             if _conn:
                 _conn.close()
             break
