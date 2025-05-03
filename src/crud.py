@@ -1,16 +1,33 @@
-
-
 import mysql.connector
 from mysql.connector import Error
+import getpass
+
+# Module-level connection (initialized on first use)
+_conn = None
+
+def prompt_credentials():
+    host = input("Host [localhost]: ") or "localhost"
+    user = input("Username [root]: ") or "root"
+    password = getpass.getpass("Password: ")
+    database = input("Database [library_db]: ") or "library_db"
+    return host, user, password, database
+
+def open_connection(host, user, password, database):
+    config = {
+        'host': host,
+        'user': user,
+        'password': password,
+        'database': database
+    }
+    return mysql.connector.connect(**config)
 
 def get_connection():
-    """Open a new database connection."""
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='your_password_here',
-        database='library_db'
-    )
+    """Prompt for credentials once and reuse the same connection."""
+    global _conn
+    if _conn is None:
+        host, user, password, database = prompt_credentials()
+        _conn = open_connection(host, user, password, database)
+    return _conn
 
 def add_book(isbn, title, subject, author, description):
     """Insert a new book into the Book table."""
@@ -27,7 +44,6 @@ def add_book(isbn, title, subject, author, description):
         return False
     finally:
         cursor.close()
-        conn.close()
 
 def get_book(isbn):
     """Fetch a single book by ISBN."""
@@ -41,7 +57,6 @@ def get_book(isbn):
         return None
     finally:
         cursor.close()
-        conn.close()
 
 def list_books(limit=10):
     """List up to `limit` books."""
@@ -55,7 +70,6 @@ def list_books(limit=10):
         return []
     finally:
         cursor.close()
-        conn.close()
 
 def update_book(isbn, **kwargs):
     """Update book fields given as keyword arguments."""
@@ -73,7 +87,6 @@ def update_book(isbn, **kwargs):
         return False
     finally:
         cursor.close()
-        conn.close()
 
 def delete_book(isbn):
     """Delete a book by ISBN."""
@@ -88,7 +101,6 @@ def delete_book(isbn):
         return False
     finally:
         cursor.close()
-        conn.close()
 
 if __name__ == '__main__':
     # Quick smoke tests for Book CRUD
@@ -99,3 +111,5 @@ if __name__ == '__main__':
     print("Fetching updated book:", get_book('0001'))
     print("Deleting sample book:", delete_book('0001'))
     print("Fetching deleted book (should be None):", get_book('0001'))
+    if _conn is not None:
+        _conn.close()
