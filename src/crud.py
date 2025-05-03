@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 import getpass
+from datetime import datetime, timedelta
 
 # Set to False to prompt for host, user, and database interactively
 USE_DEFAULT = True
@@ -485,15 +486,78 @@ def loans_menu():
         print(" 0. Back")
         choice = input("Loan choice: ").strip()
         if choice == "1":
+            # Prompt for Loan ID
             lid = int(input("Loan ID: "))
-            mid = int(input("Member ID: "))
-            isbn = input("ISBN: ")
-            cid = int(input("Copy ID: "))
-            co = input("Checkout Date (YYYY-MM-DD): ")
-            du = input("Due Date (YYYY-MM-DD): ")
-            re = input("Return Date (YYYY-MM-DD or blank): ") or None
-            status = input("Overdue Status (None, NoticeSent, Late): ")
-            sid = int(input("Staff ID: "))
+
+            # Validate Member ID
+            while True:
+                mid = int(input("Member ID (0 to abort): "))
+                if mid == 0:
+                    print("Aborting add loan.")
+                    break
+                member = get_member(mid)
+                if member is None:
+                    print("Member ID not found. Please try again or enter 0 to abort.")
+                    continue
+                break
+            if mid == 0:
+                continue
+
+            # Determine default due date based on member privileges
+            days = 90 if member.get('professor_privileges') else 30
+
+            # Validate Copy (ISBN + Copy ID)
+            while True:
+                isbn = input("ISBN (or 0 to abort): ").strip()
+                if isbn == "0":
+                    print("Aborting add loan.")
+                    break
+                try:
+                    cid = int(input("Copy ID: "))
+                except ValueError:
+                    print("Invalid Copy ID; please enter an integer.")
+                    continue
+                copy_rec = get_copy(isbn, cid)
+                if copy_rec is None:
+                    print("Copy not found. Please try again or enter 0 to abort.")
+                    continue
+                break
+            if isbn == "0":
+                continue
+
+            # Prompt for Checkout Date with default today
+            default_co = datetime.today().date().isoformat()
+            co = input(f"Checkout Date (YYYY-MM-DD) [{default_co}]: ").strip() or default_co
+
+            # Compute and prompt for Due Date with default based on privileges
+            default_due = (datetime.strptime(co, "%Y-%m-%d") + timedelta(days=days)).date().isoformat()
+            du = input(f"Due Date (YYYY-MM-DD) [{default_due}]: ").strip() or default_due
+
+            # Prompt for Return Date with default None
+            re = input("Return Date (YYYY-MM-DD) [None]: ").strip() or None
+
+            # Prompt for Overdue Status with default None
+            status = input("Overdue Status (None, NoticeSent, Late) [None]: ").strip() or "None"
+
+            # Validate Staff ID
+            while True:
+                try:
+                    sid = int(input("Staff ID (0 to abort): "))
+                except ValueError:
+                    print("Invalid Staff ID; please enter an integer.")
+                    continue
+                if sid == 0:
+                    print("Aborting add loan.")
+                    break
+                staff_rec = get_staff(sid)
+                if staff_rec is None:
+                    print("Staff ID not found. Please try again or enter 0 to abort.")
+                    continue
+                break
+            if sid == 0:
+                continue
+
+            # Finally, add the loan
             print("Added Loan:", add_loan(lid, mid, isbn, cid, co, du, re, status, sid))
         elif choice == "2":
             lid = int(input("Loan ID: "))
