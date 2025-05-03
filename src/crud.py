@@ -547,18 +547,26 @@ def loans_menu():
 
             # Prompt for Checkout Date with default today
             default_co = datetime.today().date().isoformat()
-            co = input(f"Checkout Date (YYYY-MM-DD) [{default_co}]: ").strip() or default_co
+            co = input(f"Checkout Date (YYYY-MM-DD) [Today]: ").strip() or default_co
 
             # Compute and prompt for Due Date with default based on privileges
             default_due = (datetime.strptime(co, "%Y-%m-%d") + timedelta(days=days)).date().isoformat()
-            du = input(f"Due Date (YYYY-MM-DD) [{default_due}]: ").strip() or default_due
+            du = input(f"Due Date (YYYY-MM-DD) [{days} days]: ").strip() or default_due
 
             # Prompt for Return Date with default None
             re = input("Return Date (YYYY-MM-DD) [None]: ").strip() or None
 
             # Prompt for Overdue Status with default None
-            status = input("Overdue Status (None, NoticeSent, Late) [None]: ").strip() or "None"
-
+            ans = input("Overdue Status ([N]one, Notice[S]ent, [L]ate) [None]: ").strip()
+            if ans == "N" or "n":
+                status = "None"
+            elif ans == "S" or "s":
+                status = "Notice Sent"
+            elif ans == "L" or "l":
+                status = "Late"
+            else:
+                print("Defaulting to None.")
+                status = "None"
             # Validate Staff ID
             while True:
                 try:
