@@ -1,5 +1,3 @@
-
-
 # LibraryMS
 
 A CSCI 331 group project: a simple Library Management System built with MySQL and Python.
@@ -56,6 +54,27 @@ This program initializes and manages a library database for Books, Copies, Membe
    python3.13 src/init_db.py
    ```
    - Enter your MySQL password when prompted.
+
+## Configuration
+
+By default, `src/init_db.py` uses a `USE_DEFAULT` flag set to `True`, which means it connects to:
+- Host: localhost  
+- User: root  
+- Database: library_db  
+
+and only prompts you for the MySQL password. If you need to customize the host, user, or database interactively, open `src/init_db.py` and set:
+```python
+USE_DEFAULT = False
+```
+at the top of the file.
+
+## Data Loading Behavior
+
+In `sql/data.sql`, all `INSERT INTO` statements have been changed to `INSERT IGNORE INTO`. This means:
+
+- Duplicate‐key errors (e.g., inserting a row with an existing primary key) are converted into warnings, so the script continues without aborting.
+- The seed script becomes idempotent: you can run it multiple times and only new, non-conflicting rows will be added.
+- Any manual edits or existing data remain unchanged when re-running the data load.
 
 ## Usage
 
