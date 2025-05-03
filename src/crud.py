@@ -2,6 +2,9 @@ import mysql.connector
 from mysql.connector import Error
 import getpass
 
+# Set to False to prompt for host, user, and database interactively
+USE_DEFAULT = True
+
 # --- Table Printing Helper ---
 def print_table(rows):
     """Print a list of dicts as a simple table."""
@@ -24,11 +27,23 @@ def print_table(rows):
 _conn = None
 
 def prompt_credentials():
-    """Prompt only for the database password; use default host, user, database."""
-    host = "localhost"
-    user = "root"
-    database = "library_db"
-    password = getpass.getpass("MySQL password for root@localhost: ")
+    """
+    Prompt for database connection credentials.
+    If USE_DEFAULT is True, use default host/user/db and prompt only for password.
+    Otherwise, prompt for all connection info.
+    """
+    if USE_DEFAULT:
+        # Use default host, user, database; prompt only for password
+        host = "localhost"
+        user = "root"
+        database = "library_db"
+        password = getpass.getpass("MySQL password for root@localhost: ")
+    else:
+        # Prompt for all connection details
+        host = input("Host [localhost]: ") or "localhost"
+        user = input("Username [root]: ") or "root"
+        password = getpass.getpass("Password: ")
+        database = input("Database [library_db]: ") or "library_db"
     return host, user, password, database
 
 def open_connection(host, user, password, database):
