@@ -391,6 +391,129 @@ def delete_staff(staff_id):
     finally:
         cursor.close()
 
+# --- Loan CRUD ---
+
+def add_loan(loan_id, member_id, isbn, copy_id, checkout_date, due_date, return_date, overdue_status, staff_id):
+    """Insert a new loan into the Loan table."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    sql = ("INSERT INTO Loan "
+           "(loan_id, member_id, isbn, copy_id, checkout_date, due_date, return_date, overdue_status, staff_id) "
+           "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+    try:
+        cursor.execute(sql, (loan_id, member_id, isbn, copy_id, checkout_date, due_date, return_date, overdue_status, staff_id))
+        conn.commit()
+        return True
+    except Error as e:
+        print("Error adding loan:", e)
+        return False
+    finally:
+        cursor.close()
+
+def get_loan(loan_id):
+    """Fetch a single loan by loan_id."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT * FROM Loan WHERE loan_id = %s", (loan_id,))
+        return cursor.fetchone()
+    except Error as e:
+        print("Error fetching loan:", e)
+        return None
+    finally:
+        cursor.close()
+
+def list_loans():
+    """List loans, prompting the user for how many to return."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        count = input("How many loans would you like to list? ")
+        try:
+            n = int(count)
+        except ValueError:
+            print("Invalid number; defaulting to 10.")
+            n = 10
+        cursor.execute("SELECT * FROM Loan LIMIT %s", (n,))
+        return cursor.fetchall()
+    except Error as e:
+        print("Error listing loans:", e)
+        return []
+    finally:
+        cursor.close()
+
+def update_loan(loan_id, **kwargs):
+    """Update loan fields given keyword arguments."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    fields = ", ".join(f"{col} = %s" for col in kwargs)
+    values = list(kwargs.values()) + [loan_id]
+    sql = f"UPDATE Loan SET {fields} WHERE loan_id = %s"
+    try:
+        cursor.execute(sql, values)
+        conn.commit()
+        return cursor.rowcount > 0
+    except Error as e:
+        print("Error updating loan:", e)
+        return False
+    finally:
+        cursor.close()
+
+def delete_loan(loan_id):
+    """Delete a loan by loan_id."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM Loan WHERE loan_id = %s", (loan_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+    except Error as e:
+        print("Error deleting loan:", e)
+        return False
+    finally:
+        cursor.close()
+
+def loans_menu():
+    """Submenu for Loan operations."""
+    while True:
+        print("\nLoans ▶")
+        print(" 1. Add Loan")
+        print(" 2. Get Loan")
+        print(" 3. List Loans")
+        print(" 4. Update Loan")
+        print(" 5. Delete Loan")
+        print(" 0. Back")
+        choice = input("Loan choice: ").strip()
+        if choice == "1":
+            lid = int(input("Loan ID: "))
+            mid = int(input("Member ID: "))
+            isbn = input("ISBN: ")
+            cid = int(input("Copy ID: "))
+            co = input("Checkout Date (YYYY-MM-DD): ")
+            du = input("Due Date (YYYY-MM-DD): ")
+            re = input("Return Date (YYYY-MM-DD or blank): ") or None
+            status = input("Overdue Status (None, NoticeSent, Late): ")
+            sid = int(input("Staff ID: "))
+            print("Added Loan:", add_loan(lid, mid, isbn, cid, co, du, re, status, sid))
+        elif choice == "2":
+            lid = int(input("Loan ID: "))
+            print("Loan:", get_loan(lid))
+        elif choice == "3":
+            rows = list_loans()
+            print_table(rows)
+        elif choice == "4":
+            lid = int(input("Loan ID: "))
+            field = input("Field to update: ")
+            value = input("New value: ")
+            print("Updated Loan:", update_loan(lid, **{field: value}))
+        elif choice == "5":
+            lid = int(input("Loan ID: "))
+            print("Deleted Loan:", delete_loan(lid))
+        elif choice == "0":
+            break
+        else:
+            print("Invalid choice, please try again.")
+
 
 
 def books_menu():
@@ -555,6 +678,7 @@ def main():
         print("2) Copies")
         print("3) Members")
         print("4) Staff")
+        print("5) Loans")
         print("0) Exit")
         choice = input("Enter choice: ").strip()
         if choice == "1":
@@ -565,6 +689,8 @@ def main():
             members_menu()
         elif choice == "4":
             staff_menu()
+        elif choice == "5":
+            loans_menu()
         elif choice == "0":
             print("Goodbye!")
             if _conn:
