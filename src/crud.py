@@ -13,10 +13,40 @@ def print_table(rows):
         print("No records found.")
         return
     headers = list(rows[0].keys())
-    # compute column widths
-    widths = {h: max(len(h), max(len(str(r[h])) for r in rows)) for h in headers}
+    header_map = {
+        'loan_id': 'Loan #',
+        'member_id': 'Member #',
+        'name': 'Name',
+        'ssn': 'SSN',
+        'address': 'Address',
+        'expiration_date': 'Expiration Date',
+        'active_flag': 'Active',
+        'professor_privileges': 'Privileges',
+        'isbn': 'ISBN',
+        'title': 'Title',
+        'subject': 'Subject',
+        'author': 'Author',
+        'description': 'Description',
+        'copy_id': 'Copy ID',
+        'status': 'Status',
+        'location': 'Location',
+        'checkout_date': 'Checkout Date',
+        'due_date': 'Due Date',
+        'return_date': 'Return Date',
+        'overdue_status': 'Overdue Status',
+        'staff_id': 'Staff ID',
+        'staff_name': 'Staff Name',
+        'staff_role': 'Role'
+    }
+    display_headers = [header_map.get(h, h) for h in headers]
+    # compute column widths based on display headers and data
+    widths = {}
+    for h, dh in zip(headers, display_headers):
+        max_data = max(len(str(r[h])) for r in rows)
+        widths[h] = max(len(dh), max_data)
+
     # print header
-    header_line = " | ".join(h.ljust(widths[h]) for h in headers)
+    header_line = " | ".join(dh.ljust(widths[h]) for h, dh in zip(headers, display_headers))
     print(header_line)
     print("-" * len(header_line))
     # print each row
@@ -589,7 +619,11 @@ def loans_menu():
             print("Added Loan:", add_loan(lid, mid, isbn, cid, co, du, re, status, sid))
         elif choice == "2":
             lid = int(input("Loan ID: "))
-            print("Loan:", get_loan(lid))
+            rec = get_loan(lid)
+            if rec:
+                print_table([rec])
+            else:
+                print("No loan found.")
         elif choice == "3":
             rows = list_loans()
             print_table(rows)
@@ -628,7 +662,11 @@ def books_menu():
             print("Added Book:", add_book(isbn, title, subject, author, description))
         elif choice == "2":
             isbn = input("ISBN: ")
-            print("Book:", get_book(isbn))
+            rec = get_book(isbn)
+            if rec:
+                print_table([rec])
+            else:
+                print("No book found.")
         elif choice == "3":
             rows = list_books()
             print_table(rows)
@@ -665,7 +703,11 @@ def copies_menu():
         elif choice == "2":
             isbn = input("ISBN: ")
             cid = int(input("Copy ID: "))
-            print("Copy:", get_copy(isbn, cid))
+            rec = get_copy(isbn, cid)
+            if rec:
+                print_table([rec])
+            else:
+                print("No copy found.")
         elif choice == "3":
             rows = list_copies()
             print_table(rows)
@@ -706,7 +748,11 @@ def members_menu():
             print("Added Member:", add_member(mid, name, ssn, addr, exp, active, prof))
         elif choice == "2":
             mid = int(input("Member ID: "))
-            print("Member:", get_member(mid))
+            rec = get_member(mid)
+            if rec:
+                print_table([rec])
+            else:
+                print("No member found.")
         elif choice == "3":
             rows = list_members()
             print_table(rows)
@@ -741,7 +787,11 @@ def staff_menu():
             print("Added Staff:", add_staff(sid, name, role))
         elif choice == "2":
             sid = int(input("Staff ID: "))
-            print("Staff:", get_staff(sid))
+            rec = get_staff(sid)
+            if rec:
+                print_table([rec])
+            else:
+                print("No staff found.")
         elif choice == "3":
             rows = list_staff()
             print_table(rows)
