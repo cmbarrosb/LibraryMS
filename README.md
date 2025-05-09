@@ -57,7 +57,7 @@ This program initializes and manages a library database for Books, Copies, Membe
    ```bash
    C:\users\UserName\appdata\local\programs\python\python311\python.exe src/init_db.py
    ```
-   **Prompted to enter Password**
+4. **Prompted to enter Password**
    - Enter your MySQL password when prompted.
 
 ## Configuration
