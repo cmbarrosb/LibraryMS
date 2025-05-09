@@ -53,11 +53,11 @@ This program initializes and manages a library database for Books, Copies, Membe
    ```bash
    python3.13 src/init_db.py
    ```
-   **If you have multiple python installed in your system you might want to specify what version you want to run the python file**
-   Ex:
+   **If you have multiple python installed in your system you might want to specify what version you want to run the python file Ex:**
    ```bash
    C:\users\UserName\appdata\local\programs\python\python311\python.exe src/init_db.py
    ```
+   **Prompted to enter Password**
    - Enter your MySQL password when prompted.
 
 ## Configuration
