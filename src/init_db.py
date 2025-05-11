@@ -87,7 +87,7 @@ def main():
         if connection.is_connected():
             cursor.close()
             connection.close()
-            print("🔌 Connection closed.")
+            print("Connection closed.")
 
 if __name__ == '__main__':
     main()
