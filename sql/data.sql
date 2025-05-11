@@ -14,7 +14,8 @@ INSERT INTO Copy (isbn, copy_id, status, location) VALUES
 ('9780131101630', 2, 'Not Available', 'Shelf A1'),
 ('9780262033848', 1, 'Available', 'Shelf B2'),
 ('9780596009205', 1, 'Available', 'Shelf C1'),
-('9781492078005', 1, 'Not Available', 'Shelf C2');
+('9781492078005', 1, 'Not Available', 'Shelf C2'),
+('9780201633610', 1, 'Available', 'Shelf D1');
 
 -- Member Data
 INSERT INTO Member (member_id, name, ssn, address, expiration_date, active_flag, professor_privileges) VALUES
