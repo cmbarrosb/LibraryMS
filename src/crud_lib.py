@@ -443,29 +443,12 @@ def delete_loan(loan_id):
 
 def list_overdue_loans():
     """
-    Returns loans still late and not returned, with member name,
-    book title, due date, days overdue, and processing staff name.
+    Returns all rows from the OverdueLoans view.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    sql = """
-        SELECT
-          L.loan_id,
-          M.name   AS member_name,
-          B.title  AS book_title,
-          L.due_date,
-          DATEDIFF(CURDATE(), L.due_date) AS days_overdue,
-          S.staff_name AS processed_by
-        FROM Loan L
-        JOIN Member M ON L.member_id = M.member_id
-        JOIN Book   B ON L.isbn      = B.isbn
-        JOIN Staff  S ON L.staff_id  = S.staff_id
-        WHERE L.overdue_status = 'Late'
-          AND L.return_date IS NULL
-        ORDER BY days_overdue DESC
-    """
     try:
-        cursor.execute(sql)
+        cursor.execute("SELECT * FROM OverdueLoans")
         return cursor.fetchall()
     finally:
         cursor.close()
@@ -473,23 +456,12 @@ def list_overdue_loans():
 
 def list_top_borrowers(days=30):
     """
-    Returns members ranked by number of loans in the past `days` days.
+    Returns all rows from the TopBorrowers view.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    sql = """
-        SELECT
-          M.member_id,
-          M.name,
-          COUNT(*) AS loans_count
-        FROM Loan L
-        JOIN Member M ON L.member_id = M.member_id
-        WHERE L.checkout_date >= DATE_SUB(CURDATE(), INTERVAL %s DAY)
-        GROUP BY M.member_id, M.name
-        ORDER BY loans_count DESC
-    """
     try:
-        cursor.execute(sql, (days,))
+        cursor.execute("SELECT * FROM TopBorrowers")
         return cursor.fetchall()
     finally:
         cursor.close()
@@ -497,21 +469,12 @@ def list_top_borrowers(days=30):
 
 def list_available_copies_by_subject():
     """
-    Returns each subject and the number of copies currently available.
+    Returns all rows from the AvailableCopiesBySubject view.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    sql = """
-        SELECT
-          B.subject AS subject,
-          COUNT(*)  AS available_copies
-        FROM Copy C
-        JOIN Book B ON C.isbn = B.isbn
-        WHERE C.status = 'Available'
-        GROUP BY B.subject
-    """
     try:
-        cursor.execute(sql)
+        cursor.execute("SELECT * FROM AvailableCopiesBySubject")
         return cursor.fetchall()
     finally:
         cursor.close()
@@ -519,23 +482,12 @@ def list_available_copies_by_subject():
 
 def list_staff_activity(weeks=1):
     """
-    Returns each staff member and how many loans they processed in the past `weeks` weeks.
+    Returns all rows from the StaffActivity view.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
-    sql = """
-        SELECT
-          S.staff_id,
-          S.staff_name,
-          COUNT(*) AS processed_loans
-        FROM Loan L
-        JOIN Staff S ON L.staff_id = S.staff_id
-        WHERE L.checkout_date >= DATE_SUB(CURDATE(), INTERVAL %s WEEK)
-        GROUP BY S.staff_id, S.staff_name
-        ORDER BY processed_loans DESC
-    """
     try:
-        cursor.execute(sql, (weeks,))
+        cursor.execute("SELECT * FROM StaffActivity")
         return cursor.fetchall()
     finally:
         cursor.close()
